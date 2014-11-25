@@ -1,6 +1,6 @@
 {
   "name": "makeforgit",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Generate content for exploring git commands",
   "main": "index.js",
   "scripts": {
@@ -23,5 +23,9 @@
   "homepage": "https://github.com/pwcberry/makeforgit",
   "dependencies": {
     "nomnom": "^1.8.1"
+  },
+  "preferGlobal":true,
+  "bin": {
+    "makeforgit" : "index.js"
   }
 }
