@@ -1,0 +1,27 @@
+{
+  "name": "makeforgit",
+  "version": "0.0.1",
+  "description": "Generate content for exploring git commands",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pwcberry/makeforgit.git"
+  },
+  "keywords": [
+    "module",
+    "git",
+    "makeforgit"
+  ],
+  "author": "Peter Berry",
+  "license": "GNU",
+  "bugs": {
+    "url": "https://github.com/pwcberry/makeforgit/issues"
+  },
+  "homepage": "https://github.com/pwcberry/makeforgit",
+  "dependencies": {
+    "nomnom": "^1.8.1"
+  }
+}
