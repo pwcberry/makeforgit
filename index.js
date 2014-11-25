@@ -99,6 +99,14 @@ function addGitAction(filename, data, next) {
 	};
 }
 
+/**
+ * Build up the actions that each subsequent action
+ * can be passed into the next, a bit like the 
+ * "Command" pattern.
+ *
+ * We can ensure that git executes safely in a child process,
+ * without conflict.
+ */
 function commitToGit(files) {
 	var actions;
 
