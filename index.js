@@ -56,8 +56,8 @@ function appendChanges(filenamebase, extension, index, template) {
 function commitAllToGit(files) {
 	var gitAdd, 
 		gitAddCommand = 'git add',
-	 	commitMsg = 'Random changes to ' + files[0].file.replace(/\d+\.js$/, '*.js. ') +
-	 				'Committing all at ' + timestamp();
+	 	commitMsg = 'Committing changes to ' + files[0].file.replace(/\d+\.js$/, '*.js ') +
+	 				'at ' + timestamp();
 
 	 files.map(function(x){
 	 	gitAddCommand+=' ' + x.file;
