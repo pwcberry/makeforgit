@@ -164,7 +164,7 @@ var optionConfig = require('nomnom')
 	})
 	.option('append', {
 		abbr: 'a',
-		help: 'append template to file(s). If it the template doesn\'t match, the string value is used'
+		help: 'Append template to file specified with index. If the template doesn\'t match a pre-exiting one, the argument value is used'
 	})
 	.option('commit', {
 		abbr: 'c',
@@ -174,7 +174,7 @@ var optionConfig = require('nomnom')
 	.option('one', {
 		abbr: 'o',
 		flag: true,
-		help: 'Commit each file as an individual snapshot'
+		help: 'Commit each file as an individual snapshot. Use with --commit'
 	});
 
 var opts = optionConfig.parse();

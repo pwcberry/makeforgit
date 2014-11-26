@@ -4,12 +4,14 @@ A simple command line tool for generating files to understand git's commands at 
 
 Options:
 
-	makeforgit number filename [--commit] [--all]
+	makeforgit filename [--number] [--index] [--append] [--commit] [--one]
 
-	number: number of files to generate
-	filename: filename prefix
-	--commit: commit each file individually
-	--all: with --commit: commit all files in one commit
+	filename        The file name prefix
+	-n, --number    The number of files to generate
+	-i, --index     Specify the file index to modify
+	-a, --append	Append template to file specified with index. If the template doesn't match a pre-exiting one, the argument value is used
+	-c, --commit	Commit all files as one snapshot
+	-o, --one       Commit each file as an individual snapshot. Use with --commit
 
 
 ## Installing locally
