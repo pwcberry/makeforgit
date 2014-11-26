@@ -5,6 +5,16 @@
 var fs = require('fs');
 var cp = require('child_process');
 
+var Template = {
+	'array': 'var teams = { \'KitKats\': [], \'Infinity\': [], \'TickleMyCode\': [] }; \n',
+	'bug': 'var beers = [\'Czech\', \'Belgian\', \'Polish\', \'Croatian\']\n',
+	'for': ('for (var i = 0; i < count; i++) {\n' + '    teams[i].doSomething();\n' + '}\n'),
+	'if': ('if (isAwesome(teams.TickleMyCode)) {\n'+ '  goDrinking();\n' + '}\n'),
+	'console': 'console.log(\'This team is awesome: \' + team.Infinity);\n',
+	'while': 'while (!isDrunk(team.KitKats)) {\n    goDrinking(team.KitKats);\n}\n'
+}
+
+
 function random(a, b) {
 	return isNaN(b) ? 
 		Math.floor(Math.random() * a) :
@@ -16,17 +26,31 @@ function timestamp() {
 }
 
 function generateRandomChanges(count, filenamebase, extension) {
-	var index = 1, result = [], filename, data, commitMsg;
+	var index = 1, result = [], filename, number, data;
 	while (index<=count) {
 		filename = filenamebase + index + '.' + extension;
-		data = 'var counter=' + random(1000, 10000) + ';';		
+		number = random(1000, 10000);
+		data = 'var howAwesome=' + number + ';\n';
 
 		fs.writeFileSync(filename, data);
-		result.push({file: filename, data: data});
+		result.push({file: filename, data: number });
 		index++;
 	}
 
 	return result;
+}
+
+function appendChanges(filenamebase, extension, index, template) {
+	var filename = (filenamebase + index + '.' + extension),
+		contentToAppend = ('\n// ---\n\n' + (Template[template] || (template + '\n')));
+
+	fs.appendFile(filename, contentToAppend, function(err) {
+		if (err) {
+			throw err;
+		}
+	});
+
+	return [{file: filename, data: '' }];
 }
 
 function commitAllToGit(files) {
@@ -70,7 +94,10 @@ function commitAllToGit(files) {
 
 function addGitAction(filename, data, next) {
 	return function() {
-		var gitAdd;
+		var gitAdd, 
+			commitMessage = typeof data == 'number' ? 
+				('git commit -m "A random change of ' + data + ' to "' + filename +'"') :
+				('A cruisy modification to "' + filename + '"');
 		
 		gitAdd = cp.exec(('git add ' + filename), 
 			function(err, stdout) {
@@ -83,7 +110,7 @@ function addGitAction(filename, data, next) {
 				}
 				gitAdd.stdin.end();
 				
-				gitCommit = cp.exec(('git commit -m "A random change of to ' + filename +'" "' + filename +'"'), function(err, stdout){
+				gitCommit = cp.exec(commitMessage, function(err, stdout){
 					if (!err) {
 						console.log(stdout);
 					} else {
@@ -122,45 +149,66 @@ function commitToGit(files) {
 }
 
 var optionConfig = require('nomnom')
-	.option('number', {
+	.script('makeforgit')
+	.option('filename', {
 		position: 0,
-		default: 3,
+		help: 'The filename prefix'
+	})
+	.option('number', {
+		abbr: 'n',
 		help: 'The number of files to generate'
 	})
-	.option('filename', {
-		position: 1,
-		help: 'The filename prefix'
+	.option('index', {
+		abbr: 'i',
+		help: 'Specify the file index to modify'
+	})
+	.option('append', {
+		abbr: 'a',
+		help: 'append template to file(s). If it the template doesn\'t match, the string value is used'
 	})
 	.option('commit', {
 		abbr: 'c',
 		flag: true,
-		help: 'Commit files as individual snapshots'
-	})
-	.option('all', {
-		abbr: 'a',
-		flag: true,
 		help: 'Commit all files as one snapshot'
+	})
+	.option('one', {
+		abbr: 'o',
+		flag: true,
+		help: 'Commit each file as an individual snapshot'
 	});
 
 var opts = optionConfig.parse();
 var files;
 
-if (!opts.filename || isNaN(opts.number)) {
+if (!opts.filename) {
 	console.error(optionConfig.getUsage());
 	return 1;
 }
 
-if (opts.number <= 0) {
-	console.error(optionConfig.getUsage());
-	return 1;
+if (opts.number) {
+	if (isNaN(opts.number) || (opts.number <= 0)) {
+		console.error(optionConfig.getUsage());
+		return 1;
+	}
+
+	files = generateRandomChanges(opts.number, opts.filename, 'js');
 }
 
-files = generateRandomChanges(opts.number, opts.filename, 'js');
+if (opts.index) {
+	if (isNaN(opts.index)) {
+		console.error(optionConfig.getUsage());
+		return 1;
+	}
+
+	if (opts.append) {
+		files = appendChanges(opts.filename, 'js', opts.index, opts.append);
+	}
+}
 
 if (opts.commit) {
-	if (opts.all) {
-		commitAllToGit(files);
-	} else {
+	if (opts.one) {
 		commitToGit(files);
+	} else {
+		commitAllToGit(files);
 	}
 }
