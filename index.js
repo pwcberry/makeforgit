@@ -128,8 +128,7 @@ function addGitAction(filename, data, next) {
 
 /**
  * Build up the actions that each subsequent action
- * can be passed into the next, a bit like the 
- * "Command" pattern.
+ * can be passed into the next, a bit like memoization and recursion.
  *
  * We can ensure that git executes safely in a child process,
  * without conflict.
