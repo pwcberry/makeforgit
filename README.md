@@ -19,9 +19,9 @@ Options:
 You must have node installed.
 
 1. Clone the repo
-2. CD to the directory
+2. `cd` to the directory
 3. Execute `npm init` to generate the symlink
 4. Open a new shell
-5. CD to the demo directory
+5. `cd` to the demo directory
 6. Play!
 
